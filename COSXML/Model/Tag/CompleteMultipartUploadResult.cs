@@ -9,23 +9,26 @@ using System.Text;
 */
 namespace COSXML.Model.Tag
 {
+    /// <summary>
+    /// <see cref="https://cloud.tencent.com/document/product/436/7742"/>
+    /// </summary>
     public sealed class CompleteMultipartUploadResult
     {
-        /**
-         * 创建的Object的外网访问域名
-         */
+        /// <summary>
+        /// 创建的Object的外网访问域名
+        /// </summary>
         public string location;
-        /**
-         * 分块上传的目标Bucket
-         */
+        /// <summary>
+        /// 分块上传的目标Bucket
+        /// </summary>
         public string bucket;
-        /**
-         * Object的名称
-         */
+        /// <summary>
+        /// Object的名称
+        /// </summary>
         public string key;
-        /**
-         * 合并后文件的 MD5 算法校验值
-         */
+        /// <summary>
+        /// 合并后对象的唯一标签值，该值不是对象内容的 MD5 校验值，仅能用于检查对象唯一性
+        /// </summary>
         public string eTag;
 
         

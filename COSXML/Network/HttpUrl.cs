@@ -36,6 +36,8 @@ namespace COSXML.Network
 
         private string fragment;
 
+
+
         public HttpUrl()
         {
             this.queryParameters = new Dictionary<string, string>();
@@ -59,7 +61,7 @@ namespace COSXML.Network
                     throw new ArgumentException("unexpected scheme: " + scheme);
                 }
             }
-            private get{return this.scheme;}
+            get{return this.scheme;}
             
         }
 
@@ -70,17 +72,17 @@ namespace COSXML.Network
                 if (value == null) throw new ArgumentNullException("userName == null");
                 this.userName = value;
             }
-            private get{return this.userName;}
+            get{return this.userName;}
         }
 
         public string UserPassword
         {
              set
             {
-                if (userPwd == null) throw new ArgumentNullException("userPwd == null");
+                if (value == null) throw new ArgumentNullException("userPwd == null");
                 this.userPwd = value;
             }
-            private get{return this.userPwd;}
+            get {return this.userPwd;}
         }
 
         public string Host
@@ -100,7 +102,7 @@ namespace COSXML.Network
                 if (value <= 0 || value >= 65535) throw new ArgumentException("unexpected port: " + port);
                 this.port = value;
             }
-            private get { return this.port; }
+            get { return this.port; }
         }
 
         public string Path
@@ -138,7 +140,7 @@ namespace COSXML.Network
             {
                 this.fragment = value;
             }
-            private get { return this.fragment; }
+            get { return this.fragment; }
             
         }
 
@@ -233,47 +235,47 @@ namespace COSXML.Network
             }
         }
 
-        private int DelimiterOffset(string input, int pos, int limit, char delimiter)
-        {
-            for (int i = pos; i < limit; i++)
-            {
-                if (input[i] == delimiter) return i;
-            }
-            return limit;
-        }
+        //private int DelimiterOffset(string input, int pos, int limit, char delimiter)
+        //{
+        //    for (int i = pos; i < limit; i++)
+        //    {
+        //        if (input[i] == delimiter) return i;
+        //    }
+        //    return limit;
+        //}
 
-        private int DelimiterOffset(string input, int pos, int limit, string delimiters)
-        {
-            for (int i = pos; i < limit; i++)
-            {
-                if (delimiters.IndexOf(input[i]) != -1) return i;
-            }
-            return limit;
-        }
+        //private int DelimiterOffset(string input, int pos, int limit, string delimiters)
+        //{
+        //    for (int i = pos; i < limit; i++)
+        //    {
+        //        if (delimiters.IndexOf(input[i]) != -1) return i;
+        //    }
+        //    return limit;
+        //}
 
-        private void PathSegmentToString(StringBuilder outPut, List<string> pathSegments)
-        {
-            foreach (string path in pathSegments)
-            {
-                outPut.Append('/').Append(path);
-            }
-        }
+        //private void PathSegmentToString(StringBuilder outPut, List<string> pathSegments)
+        //{
+        //    foreach (string path in pathSegments)
+        //    {
+        //        outPut.Append('/').Append(path);
+        //    }
+        //}
 
-        private void NamesAndValuesToQueryString(StringBuilder outPut, List<string> namesAndValues)
-        {
-            for (int i = 0, size = namesAndValues.Count; i < size; i += 2)
-            {
-                string name = namesAndValues[i];
-                string value = namesAndValues[i + 1];
-                if (i > 0) outPut.Append('&');
-                outPut.Append(name);
-                if (value != null)
-                {
-                    outPut.Append('=');
-                    outPut.Append(value);
-                }
-            }
-        }
+        //private void NamesAndValuesToQueryString(StringBuilder outPut, List<string> namesAndValues)
+        //{
+        //    for (int i = 0, size = namesAndValues.Count; i < size; i += 2)
+        //    {
+        //        string name = namesAndValues[i];
+        //        string value = namesAndValues[i + 1];
+        //        if (i > 0) outPut.Append('&');
+        //        outPut.Append(name);
+        //        if (value != null)
+        //        {
+        //            outPut.Append('=');
+        //            outPut.Append(value);
+        //        }
+        //    }
+        //}
     }
 
 }

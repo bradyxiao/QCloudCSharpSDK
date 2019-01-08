@@ -8,8 +8,15 @@ using COSXML.Common;
 
 namespace COSXML.Model.Object
 {
+    /// <summary>
+    /// 下载对象返回的结果
+    /// <see cref="https://cloud.tencent.com/document/product/436/7753"/>
+    /// </summary>
     public sealed class GetObjectResult : CosResult
     {
+        /// <summary>
+        /// 对象的 eTag
+        /// </summary>
         public string eTag;
 
         internal override void InternalParseResponseHeaders()

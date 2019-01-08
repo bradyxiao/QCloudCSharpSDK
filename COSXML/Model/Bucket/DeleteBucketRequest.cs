@@ -12,6 +12,10 @@ namespace COSXML.Model.Bucket
 {
     public sealed class DeleteBucketRequest : BucketRequest
     {
+        /// <summary>
+        /// 删除 空 Bucket
+        /// </summary>
+        /// <param name="bucket"></param>
         public DeleteBucketRequest(string bucket)
             : base(bucket)
         {

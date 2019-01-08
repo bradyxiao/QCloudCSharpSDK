@@ -17,6 +17,7 @@ namespace COSXML.CosException
     {
         /// <summary>
         /// errorCode is for client exception code.
+        /// <see cref="Common.CosClientError"/>
         /// </summary>
         public int errorCode;
 

@@ -12,6 +12,7 @@ namespace COSXML.CosException
 {
     /// <summary>
     /// CosServerException for cos server error.
+    /// <see cref="Model.Tag.CosServerError"/>
     /// </summary>
     [Serializable]
     public class CosServerException : System.ApplicationException

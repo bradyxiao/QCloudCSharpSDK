@@ -252,8 +252,8 @@ namespace COSXML.Auth
         {
             if (request == null) throw new ArgumentNullException("Request == null");
             if (qcloudCredentials == null) throw new ArgumentNullException("QCloudCredentials == null");
+            if(qcloudSignSource == null || !(qcloudSignSource is CosXmlSignSourceProvider)) throw new ArgumentNullException("CosXmlSourceProvider == null");
             CosXmlSignSourceProvider cosXmlSourceProvider = (CosXmlSignSourceProvider)qcloudSignSource;
-            if(cosXmlSourceProvider == null) throw new ArgumentNullException("CosXmlSourceProvider == null");
            
             string signTime = cosXmlSourceProvider.GetSignTime();
             if (signTime == null)
@@ -315,28 +315,31 @@ namespace COSXML.Auth
                 .Append(CosAuthConstants.Q_HEADER_LIST).Append('=').Append(cosXmlSourceProvider.GetHeaderList()).Append('&')
                 .Append(CosAuthConstants.Q_URL_PARAM_LIST).Append('=').Append(cosXmlSourceProvider.GetParameterList()).Append('&')
                 .Append(CosAuthConstants.Q_SIGNATURE).Append('=').Append(signature);
+
+            if (qcloudCredentials is SessionQCloudCredentials)
+            {
+                signBuilder.Append("&").Append(CosRequestHeaderKey.COS_SESSION_TOKEN).Append("=").Append(((SessionQCloudCredentials)qcloudCredentials).Token);
+            }
             return signBuilder.ToString();
         }
     }
 
     public sealed class CosAuthConstants
     {
-        private CosAuthConstants() { }
+        public const string Q_SIGN_ALGORITHM = "q-sign-algorithm";
 
-        public static string Q_SIGN_ALGORITHM = "q-sign-algorithm";
+        public const string Q_AK = "q-ak";
 
-        public static string Q_AK = "q-ak";
+        public const string Q_SIGN_TIME = "q-sign-time";
 
-        public static string Q_SIGN_TIME = "q-sign-time";
+        public const string Q_KEY_TIME = "q-key-time";
 
-        public static string Q_KEY_TIME = "q-key-time";
+        public const string Q_HEADER_LIST = "q-header-list";
 
-        public static string Q_HEADER_LIST = "q-header-list";
+        public const string Q_URL_PARAM_LIST = "q-url-param-list";
 
-        public static string Q_URL_PARAM_LIST = "q-url-param-list";
+        public const string Q_SIGNATURE = "q-signature";
 
-        public static string Q_SIGNATURE = "q-signature";
-
-        public static string SHA1 = "sha1";
+        public const string SHA1 = "sha1";
     }
 }

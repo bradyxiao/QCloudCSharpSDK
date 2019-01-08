@@ -11,7 +11,7 @@ namespace COSXML.Utils
 {
    public sealed class CosValueAttribute : Attribute
     {
-        public string value
+        public string Value
         {
             get;
             private set;
@@ -19,7 +19,7 @@ namespace COSXML.Utils
 
         public CosValueAttribute(string value)
         {
-            this.value = value;
+            this.Value = value;
         }
     }
 }

@@ -1223,7 +1223,7 @@ namespace COSXML.Transfer
                         else if ("DeleteMarker".Equals(xmlReader.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             xmlReader.Read();
-                            bool.TryParse(xmlReader.Value, out deleted.deleteMarker);
+                            deleted.deleteMarker = xmlReader.Value;
                         }
                         else if ("DeleteMarkerVersionId".Equals(xmlReader.Name, StringComparison.OrdinalIgnoreCase))
                         {
@@ -1242,7 +1242,7 @@ namespace COSXML.Transfer
                             result.deletedList.Add(deleted);
                             deleted = null;
                         }
-                        else if ("CosError".Equals(xmlReader.Name, StringComparison.OrdinalIgnoreCase))
+                        else if ("Error".Equals(xmlReader.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             result.errorList.Add(error);
                             error = null;

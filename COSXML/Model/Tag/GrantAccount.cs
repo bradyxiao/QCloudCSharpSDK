@@ -4,6 +4,9 @@ using System.Text;
 
 namespace COSXML.Model.Tag
 {
+    /// <summary>
+    /// 授予者信息
+    /// </summary>
     public sealed class GrantAccount
     {
         List<string> idList;
@@ -11,6 +14,12 @@ namespace COSXML.Model.Tag
         {
             idList = new List<string>();
         }
+        /// <summary>
+        /// ownerUin,根账号
+        /// subUin，子账号
+        /// </summary>
+        /// <param name="ownerUin"></param>
+        /// <param name="subUin"></param>
         public void AddGrantAccount(string ownerUin, string subUin)
         {
             if (ownerUin != null && subUin != null)

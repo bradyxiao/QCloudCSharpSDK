@@ -33,8 +33,6 @@ namespace COSXML.Utils
                 case TimeUnit.MILLISECONDS:
                     result = (long)timeSpan.TotalMilliseconds;
                     break;
-                default:
-                    break;
             }
             return result;
         }
@@ -59,8 +57,6 @@ namespace COSXML.Utils
                     break;
                 case TimeUnit.MILLISECONDS:
                     end = start.AddMilliseconds(time);
-                    break;
-                default:
                     break;
             }
             return end.ToString(format);

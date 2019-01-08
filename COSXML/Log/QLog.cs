@@ -146,10 +146,10 @@ namespace COSXML.Log
             }  
         }
 
-        private static string PrintExceptionTrace(Exception exception)
-        {
-            return exception.ToString();
-        }
+        //private static string PrintExceptionTrace(Exception exception)
+        //{
+        //    return exception.ToString();
+        //}
     }
 
     public enum LEVEL

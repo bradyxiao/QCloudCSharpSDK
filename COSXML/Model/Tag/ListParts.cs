@@ -11,53 +11,55 @@ namespace COSXML.Model.Tag
 {
     public sealed class ListParts
     {
-         /**
-         * 分块上传的目标 Bucke
-         */
+        /// <summary>
+        /// 分块上传的目标 Bucke
+        /// </summary>
         public string bucket;
-        /**
-         * 规定返回值的编码方式
-         */
+        /// <summary>
+        /// 规定返回值的编码方式
+        /// </summary>
         public string encodingType;
-        /**
-         * Object 的名称
-         */
+        /// <summary>
+        /// Object 的名称
+        /// </summary>
         public string key;
-        /**
-         * 本次分块上传的 uploadID
-         */
+        /// <summary>
+        /// 本次分块上传的 uploadID
+        /// </summary>
         public string uploadId;
-        /**
-         * 表示这些分块所有者的信息
-         */
+        /// <summary>
+        /// 表示这些分块所有者的信息
+        /// </summary>
         public Owner owner;
-        /**
-         * 默认以 UTF-8 二进制顺序列出条目，所有列出条目从 marker 开始
-         */
+        /// <summary>
+        /// 默认以 UTF-8 二进制顺序列出条目，所有列出条目从 marker 开始
+        /// </summary>
         public string partNumberMarker;
-        /**
-         * 表示本次上传发起者的信息
-         */
+        /// <summary>
+        /// 表示本次上传发起者的信息
+        /// <see cref="Initiator"/>
+        /// </summary>
         public Initiator initiator;
-        /**
-         * 表示这些分块的存储级别
-         */
+        /// <summary>
+        /// 表示这些分块的存储级别
+        /// </summary>
         public string storageClass;
-        /**
-         * 假如返回条目被截断，则返回 nextPartNumberMarker 就是下一个条目的起点
-         */
+        /// <summary>
+        /// 假如返回条目被截断，则返回 nextPartNumberMarker 就是下一个条目的起点
+        /// </summary>
         public string nextPartNumberMarker;
-        /**
-         * 单次返回最大的条目数量
-         */
+        /// <summary>
+        /// 单次返回最大的条目数量
+        /// </summary>
         public string maxParts;
-        /**
-         * 返回条目是否被截断，布尔值：TRUE，FALSE
-         */
+        /// <summary>
+        /// 返回条目是否被截断，布尔值：TRUE，FALSE
+        /// </summary>
         public bool isTruncated;
-        /**
-         * 表示每一个块的信息
-         */
+        /// <summary>
+        /// 表示每一个块的信息
+        /// <see cref="Part"/>
+        /// </summary>
         public List<Part> parts;
 
         
@@ -110,13 +112,13 @@ namespace COSXML.Model.Tag
 
         public sealed class Initiator
         {
-            /**
-             * 创建者的一个唯一标识
-             */
+            /// <summary>
+            /// 创建者的一个唯一标识
+            /// </summary>
             public string id;
-            /**
-             * 创建者的用户名描述
-             */
+            /// <summary>
+            /// 创建者的用户名描述
+            /// </summary>
             public string disPlayName;
 
             
@@ -132,21 +134,21 @@ namespace COSXML.Model.Tag
 
         public sealed class Part
         {
-            /**
-             * 块的编号
-             */
+            /// <summary>
+            /// 块的编号
+            /// </summary>
             public string partNumber;
-            /**
-             * 块最后修改时间
-             */
+            /// <summary>
+            /// 块最后修改时间
+            /// </summary>
             public string lastModified;
-            /**
-             * Object 块的 MD5 算法校验值
-             */
+            /// <summary>
+            /// Object 块的 MD5 算法校验值
+            /// </summary>
             public string eTag;
-            /**
-             * 	块大小，单位 Byte
-             */
+            /// <summary>
+            /// 块大小，单位 Byte
+            /// </summary>
             public string size;
 
             

@@ -37,20 +37,23 @@ namespace COSXML.Network
         { get { return contentType; } set { contentType = value; } }
 
         /// <summary>
-        /// write data to outputStream
+        /// calculation content md5
+        /// </summary>
+        /// <returns></returns>
+        public abstract string GetMD5();
+
+        /// <summary>
+        /// Synchronization method: write data to outputStream 
         /// </summary>
         /// <param name="outputStream"> output stream for writing data</param>
         public abstract void OnWrite(Stream outputStream);
 
-        public abstract string GetMD5();
-
         /// <summary>
-        /// asynchoronnoc handle request body
+        /// Asynchronous method: handle request body
         /// </summary>
         /// <param name="outputStream"></param>
         /// <param name="EndRequestBody"></param>
         public abstract void StartHandleRequestBody(Stream outputStream, EndRequestBody endRequestBody);
-
 
         public Callback.OnProgressCallback ProgressCallback
         {
@@ -58,7 +61,10 @@ namespace COSXML.Network
             set { progressCallback = value; }
         }
 
-        public void OnNotifyGetResponse()
+        /// <summary>
+        /// notify progress is complete!
+        /// </summary>
+        internal void OnNotifyGetResponse()
         {
             if (progressCallback != null && contentLength >= 0)
             {
@@ -66,6 +72,11 @@ namespace COSXML.Network
             }
         }
 
+        /// <summary>
+        /// calculation progress
+        /// </summary>
+        /// <param name="complete"></param>
+        /// <param name="total"></param>
         protected void UpdateProgress(long complete, long total)
         {
             if (total == 0)progressCallback(0, 0);
@@ -83,7 +94,7 @@ namespace COSXML.Network
         public EndRequestBody endRequestBody;
     }
 
-    public delegate void EndRequestBody();
+    public delegate void EndRequestBody(Exception exception);
 
 
     public class ByteRequestBody : RequestBody
@@ -141,7 +152,7 @@ namespace COSXML.Network
             catch (Exception ex)
             {
                 QLog.E(TAG, ex.Message, ex);
-                throw;
+                requestBodyState.endRequestBody(ex); ;
             }
         }
 
@@ -161,19 +172,20 @@ namespace COSXML.Network
                 {
                     long remain = contentLength - requestBodyState.complete;
                     int count = (int)(remain > SEGMENT_SIZE ? SEGMENT_SIZE : remain);
+                    int offset = (int)requestBodyState.complete;
                     requestBodyState.complete += count;
-                    outputStream.BeginWrite(requestBodyState.buffer, (int)requestBodyState.complete, count, AsyncStreamCallback, requestBodyState);
+                    outputStream.BeginWrite(requestBodyState.buffer, offset, count, AsyncStreamCallback, requestBodyState);
                 }
                 else
                 {
                     //write over
-                    requestBodyState.endRequestBody();
+                    requestBodyState.endRequestBody(null);
                 }
             }
             catch (Exception ex)
             {
                 QLog.E(TAG, ex.Message, ex);
-                throw;
+                requestBodyState.endRequestBody(ex); ;
             }
 
         }
@@ -281,7 +293,7 @@ namespace COSXML.Network
                 {
                     if (fileStream != null) fileStream.Close();
                     //write over
-                    requestBodyState.endRequestBody();
+                    requestBodyState.endRequestBody(null);
                 }
 
             }
@@ -289,7 +301,7 @@ namespace COSXML.Network
             {
                 if (fileStream != null) fileStream.Close();
                 QLog.E(TAG, ex.Message, ex);
-                throw ;
+                requestBodyState.endRequestBody(ex); ;
             }
 
         }
@@ -318,7 +330,7 @@ namespace COSXML.Network
                 {
                     if (fileStream != null) fileStream.Close();
                     //write over
-                    requestBodyState.endRequestBody();
+                    requestBodyState.endRequestBody(null);
                 }
 
             }
@@ -326,7 +338,7 @@ namespace COSXML.Network
             {
                 if (fileStream != null) fileStream.Close();
                 QLog.E(TAG, ex.Message, ex);
-                throw;
+                requestBodyState.endRequestBody(ex);
             }
 
         }
@@ -630,14 +642,14 @@ namespace COSXML.Network
                         WriteEndLine(outputStream);
                         outputStream.Flush();
                         //write over
-                        requestBodyState.endRequestBody();
+                        requestBodyState.endRequestBody(null);
                     }
                 }
                 catch (Exception ex)
                 {
                     if (fileStream != null) fileStream.Close();
                     QLog.E(TAG, ex.Message, ex);
-                    throw ;
+                    requestBodyState.endRequestBody(ex) ;
                 }
             }
             else if (data != null)
@@ -651,7 +663,7 @@ namespace COSXML.Network
                 catch (Exception ex)
                 {
                     QLog.E(TAG, ex.Message, ex);
-                    throw ;
+                    requestBodyState.endRequestBody(ex) ;
                 }
             }
 
@@ -682,8 +694,9 @@ namespace COSXML.Network
                     {
                         long remain = realContentLength - requestBodyState.complete;
                         int count = (int)(remain > SEGMENT_SIZE ? SEGMENT_SIZE : remain);
+                        int offset = (int)requestBodyState.complete;
                         requestBodyState.complete += count;
-                        outputStream.BeginWrite(requestBodyState.buffer, (int)requestBodyState.complete, count, AsyncStreamCallback, requestBodyState);
+                        outputStream.BeginWrite(requestBodyState.buffer, offset, count, AsyncStreamCallback, requestBodyState);
                     }
                     
                     outputStream.Flush();
@@ -694,7 +707,7 @@ namespace COSXML.Network
                     WriteEndLine(outputStream);
                     outputStream.Flush();
                     //write over
-                    requestBodyState.endRequestBody();
+                    requestBodyState.endRequestBody(null);
                 }
 
             }
@@ -702,7 +715,7 @@ namespace COSXML.Network
             {
                 if (fileStream != null) fileStream.Close();
                 QLog.E(TAG, ex.Message, ex);
-                throw ;
+                requestBodyState.endRequestBody(ex);
             }
         }
 

@@ -12,10 +12,17 @@ using COSXML.Network;
 
 namespace COSXML.Model.Object
 {
+    /// <summary>
+    /// 使用者用表单的形式将文件（Object）上传至指定 Bucket 中.
+    /// <see cref="https://cloud.tencent.com/document/product/436/14690"/>
+    /// </summary>
     public sealed class PostObjectRequest : ObjectRequest
     {
         private static string TAG = typeof(PostObjectRequest).FullName;
-
+        /// <summary>
+        /// 表单字段
+        /// <see cref="FormStruct"/>
+        /// </summary>
         private FormStruct formStruct;
 
         private PostObjectRequest(string bucket, string key) 
@@ -26,12 +33,24 @@ namespace COSXML.Model.Object
             formStruct.key = key;
             this.headers.Add(CosRequestHeaderKey.CONTENT_TYPE, "multipart/form-data; boundary=" + MultipartRequestBody.BOUNDARY);
         }
-
+        /// <summary>
+        /// 上传文件
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <param name="key"></param>
+        /// <param name="srcPath"></param>
         public PostObjectRequest(string bucket, string key, string srcPath)
             :this(bucket, key, srcPath, -1L, -1L)
         {
         }
-
+        /// <summary>
+        /// 上传文件的指定部分
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <param name="key"></param>
+        /// <param name="srcPath"></param>
+        /// <param name="fileOffset">指定文件内容的起始位置</param>
+        /// <param name="sendContentLength">指定文件内容的大小</param>
         public PostObjectRequest(string bucket, string key, string srcPath, long fileOffset, long sendContentLength)
             : this(bucket, key)
         {
@@ -39,48 +58,79 @@ namespace COSXML.Model.Object
             formStruct.fileOffset = fileOffset < 0 ? 0 : fileOffset;
             formStruct.contentLength = sendContentLength < 0L ? -1L : sendContentLength;
         }
-
+        /// <summary>
+        /// 上传data数据
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <param name="key"></param>
+        /// <param name="data"></param>
         public PostObjectRequest(string bucket, string key, byte[] data)
             :this(bucket, key)
         {
             formStruct.data = data;
         }
-
+        /// <summary>
+        /// 设置进度回调
+        /// </summary>
+        /// <param name="progressCallback"></param>
         public void SetCosProgressCallback(COSXML.Callback.OnProgressCallback progressCallback)
         {
             formStruct.progressCallback = progressCallback;
         }
-
+        /// <summary>
+        /// 定义 Object 的 acl 属性。有效值：private，public-read-write，public-read；默认值：private
+        /// <see cref="Common.CosACL"/>
+        /// </summary>
+        /// <param name="cosACL"></param>
         public void SetCosACL(CosACL cosACL)
         {
             formStruct.acl = EnumUtils.GetValue(cosACL);
         }
-
+        /// <summary>
+        /// 设置对象的 cacheControl
+        /// </summary>
+        /// <param name="cacheControl"></param>
         public void SetCacheControl(string cacheControl)
         {
             SetHeader("Cache-Control", cacheControl);
         }
-
+        /// <summary>
+        /// 设置对象的contentType
+        /// </summary>
+        /// <param name="contentType"></param>
         public void SetContentType(string contentType)
         {
             SetHeader("Content-Type", contentType);
         }
-
+        /// <summary>
+        /// 设置对象的contentDisposition
+        /// </summary>
+        /// <param name="contentDisposition"></param>
         public void SetContentDisposition(string contentDisposition)
         {
             SetHeader("Content-Disposition", contentDisposition);
         }
-
+        /// <summary>
+        /// 设置对象的contentEncoding
+        /// </summary>
+        /// <param name="contentEncoding"></param>
         public void SetContentEncoding(string contentEncoding)
         {
             SetHeader("Content-Encoding", contentEncoding);
         }
-
+        /// <summary>
+        /// 设置对象 Expire
+        /// </summary>
+        /// <param name="expires"></param>
         public void SetExpires(string expires)
         {
             SetHeader("Expires", expires);
         }
-
+        /// <summary>
+        /// 设置对象header属性
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetHeader(string key, string value)
         {
             try
@@ -96,7 +146,11 @@ namespace COSXML.Model.Object
                 formStruct.headers[key] = value;
             }
         }
-
+        /// <summary>
+        /// 设置对象自定义的header属性
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetCustomerHeader(string key, string value)
         {
             try
@@ -112,14 +166,19 @@ namespace COSXML.Model.Object
                 formStruct.customHeaders[key] = value;
             }
         }
-
+        /// <summary>
+        /// 设置对象的存储类型
+        /// <see cref="Common.CosStorageClass"/>
+        /// </summary>
+        /// <param name="cosStorageClass"></param>
         public void SetCosStorageClass(string cosStorageClass)
         {
             formStruct.xCosStorageClass = cosStorageClass;
         }
 
         /// <summary>
-        /// the host you want to redirect
+        /// 若设置优先生效，返回 303 并提供 Location 头部，
+        /// 会在 URL 尾部加上 bucket={bucket}&key={key}&etag={%22etag%22} 参数。
         /// </summary>
         /// <param name="redirectHost"></param>
         public void SetSuccessActionRedirect(string redirectHost)
@@ -129,13 +188,18 @@ namespace COSXML.Model.Object
 
         /// <summary>
         /// successHttpCode can be 200, 201, 204, default value 204
+        /// 若填写 success_action_redirect 则会略此设置。
         /// </summary>
         /// <param name="successHttpCode"></param>
         public void SetSuccessActionStatus(int successHttpCode)
         {
             formStruct.successActionStatus = successHttpCode.ToString();
         }
-
+        /// <summary>
+        /// 用于做请求检查，如果请求的内容和 Policy 指定的条件不符，返回 403 AccessDenied。
+        /// <see cref="Policy"/>
+        /// </summary>
+        /// <param name="policy"></param>
         public void SetPolicy(Policy policy)
         {
             formStruct.policy = policy;
@@ -148,8 +212,8 @@ namespace COSXML.Model.Object
 
         public override void CheckParameters()
         {
-            base.CheckParameters();
             formStruct.CheckParameter();
+            base.CheckParameters();
         }
 
         public override CosXmlSignSourceProvider GetSignSourceProvider()
@@ -189,19 +253,63 @@ namespace COSXML.Model.Object
 
         private class FormStruct
         {
+            /// <summary>
+            /// 对象的ACL
+            /// </summary>
             public string acl;
+            /// <summary>
+            /// 对象的header元数据
+            /// </summary>
             public Dictionary<string, string> headers;
+            /// <summary>
+            /// 上传后的文件名，使用 ${filename} 则会进行替换。
+            /// 例如a/b/${filename}，上传文件 a1.txt，那么最终的上传路径就是 a/b/a1.txt
+            /// </summary>
             public string key;
+            /// <summary>
+            /// 若设置优先生效，返回 303 并提供 Location 头部
+            /// </summary>
             public string successActionRedirect;
+            /// <summary>
+            /// 可选 200，201，204 默认返回 204。若填写 success_action_redirect 则会略此设置。
+            /// </summary>
             public string successActionStatus;
+            /// <summary>
+            /// 对象的自定义元数据
+            /// </summary>
             public Dictionary<string, string> customHeaders;
+            /// <summary>
+            /// 对象存储类型
+            /// </summary>
             public string xCosStorageClass;
+            /// <summary>
+            /// 签名串
+            /// </summary>
             public string sign;
+            /// <summary>
+            /// 请求检查策略
+            /// <see cref="Policy"/>
+            /// </summary>
             public Policy policy;
+            /// <summary>
+            /// 上传文件的本地路径
+            /// </summary>
             public string srcPath;
+            /// <summary>
+            /// 上传文件指定起始位置
+            /// </summary>
             public long fileOffset = 0L;
+            /// <summary>
+            /// 上传文件指定内容大小
+            /// </summary>
             public long contentLength = -1L;
+            /// <summary>
+            /// 上传data数据
+            /// </summary>
             public byte[] data;
+            /// <summary>
+            /// 上传回调
+            /// </summary>
             public COSXML.Callback.OnProgressCallback progressCallback;
             
 
@@ -259,7 +367,13 @@ namespace COSXML.Model.Object
 
         public class Policy
         {
+            /// <summary>
+            /// 过期时间
+            /// </summary>
             private string expiration;
+            /// <summary>
+            /// 检查条件
+            /// </summary>
             private StringBuilder conditions = new StringBuilder();
 
             public void SetExpiration(long endTimeMills)

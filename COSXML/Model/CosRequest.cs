@@ -27,21 +27,52 @@ namespace COSXML.Model
     {
         private static string TAG = typeof(CosRequest).FullName;
 
+        protected Request realRequest;
+
+        /// <summary>
+        /// isHttps = true, https 请求; isHttps = false, http 请求； default isHttps = false.
+        /// </summary>
         protected bool? isHttps = null;
 
+        /// <summary>
+        /// cos api 请求对应的 http method.
+        /// </summary>
         protected string method = CosRequestMethod.GET;
 
+        /// <summary>
+        /// http 请求url中 path 部分.
+        /// </summary>
         protected string path;
 
+        /// <summary>
+        /// http 请求url中 query 部分.
+        /// </summary>
         protected Dictionary<string, string> queryParameters = new Dictionary<string,string>();
 
+        /// <summary>
+        /// http 请求 header 部分.
+        /// </summary>
         protected Dictionary<string, string> headers = new Dictionary<string,string>();
 
+        /// <summary>
+        /// cos 服务的 appid.
+        /// </summary>
         protected string appid;
 
+        /// <summary>
+        /// cos 服务签名的签名源部分.
+        /// </summary>
         protected CosXmlSignSourceProvider cosXmlSignSourceProvider = new CosXmlSignSourceProvider();
 
+        /// <summary>
+        /// needMD5 = true, 请求中带上 Content-Md5; needMd5 = false, 请求中不带 Content-Md5; defalut needMd5 = false.
+        /// </summary>
         protected bool needMD5 = false;
+
+        /// <summary>
+        /// 请求预签名URL
+        /// </summary>
+        protected string requestUrlWithSign = null;
 
         /// <summary>
         /// http or https for cos request.
@@ -52,23 +83,37 @@ namespace COSXML.Model
             set { isHttps = value; }
         }
 
+        /// <summary>
+        /// http method
+        /// </summary>
         public string Method
         {
             get { return method; }
             private set { }
         }
 
+        /// <summary>
+        /// path of http url.
+        /// </summary>
         public string RequestPath 
         {
             get { return path; }
             private set { }
         }
 
+        /// <summary>
+        /// query of http url.
+        /// </summary>
+        /// <returns></returns>
         public virtual Dictionary<string, string> GetRequestParamters()
         {
             return queryParameters;
         }
 
+        /// <summary>
+        /// http request header
+        /// </summary>
+        /// <returns></returns>
         public virtual Dictionary<string, string> GetRequestHeaders()
         {
             return headers;
@@ -126,6 +171,9 @@ namespace COSXML.Model
             set { this.appid = value; }
         }
 
+        /// <summary>
+        /// 是否带上content-md5
+        /// </summary>
         public bool IsNeedMD5
         {
             get { return needMD5; }
@@ -150,12 +198,25 @@ namespace COSXML.Model
         /// <exception cref="COSXML.CosException.CosClientException"></exception>
         public abstract void CheckParameters();
 
+        /// <summary>
+        /// 设置签名的有效期： [signStartTimeSecond, signStartTimeSecond + durationSecond]
+        /// </summary>
+        /// <param name="signStartTimeSecond"></param>
+        /// <param name="durationSecond"></param>
         public virtual void SetSign(long signStartTimeSecond, long durationSecond)
         {
             if (cosXmlSignSourceProvider == null) cosXmlSignSourceProvider = new CosXmlSignSourceProvider();
             cosXmlSignSourceProvider.SetSignTime(signStartTimeSecond, durationSecond);
         }
 
+        /// <summary>
+        /// 计算签名时，带上头部header 和查询参数 query验证.
+        /// 设置签名的有效期： [signStartTimeSecond, signStartTimeSecond + durationSecond]
+        /// </summary>
+        /// <param name="signStartTimeSecond"></param>
+        /// <param name="durationSecond"></param>
+        /// <param name="headerKeys"></param>
+        /// <param name="queryParameterKeys"></param>
         public virtual void SetSign(long signStartTimeSecond, long durationSecond, List<string> headerKeys, List<string> queryParameterKeys)
         {
             if (cosXmlSignSourceProvider == null) cosXmlSignSourceProvider = new CosXmlSignSourceProvider();
@@ -164,14 +225,45 @@ namespace COSXML.Model
             cosXmlSignSourceProvider.AddParameterKeys(queryParameterKeys);
         }
 
+        /// <summary>
+        /// 直接设置签名串.
+        /// </summary>
+        /// <param name="sign"></param>
         public virtual void SetSign(string sign)
         {
             SetRequestHeader(CosRequestHeaderKey.AUTHORIZAIION, sign);
         }
 
+        /// <summary>
+        /// 返回签名数据源
+        /// </summary>
+        /// <returns></returns>
         public virtual CosXmlSignSourceProvider GetSignSourceProvider()
         {
             return cosXmlSignSourceProvider;
+        }
+
+        /// <summary>
+        /// 设置预签名URL
+        /// </summary>
+        /// <param name="requestSignURL"></param>
+        public string RequestURLWithSign
+        {
+            get { return requestUrlWithSign; }
+            set { requestUrlWithSign = value; }
+        }
+
+        public void BindRequest(Request request)
+        {
+            this.realRequest = request;
+        }
+
+        public void Cancel()
+        {
+            if (realRequest != null)
+            {
+                realRequest.Cancel();
+            }
         }
     }
 }

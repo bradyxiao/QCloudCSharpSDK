@@ -11,7 +11,8 @@ using COSXML.Common;
 namespace COSXML.Model.Service
 {
     /// <summary>
-    /// get service api
+    /// 获取所有 Bucket 列表
+    /// <see cref="https://cloud.tencent.com/document/product/436/8291"/>
     /// </summary>
     public sealed class GetServiceRequest : CosRequest
     {

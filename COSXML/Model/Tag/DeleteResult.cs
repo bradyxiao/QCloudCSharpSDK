@@ -9,9 +9,21 @@ using System.Text;
 */
 namespace COSXML.Model.Tag
 {
+    /// <summary>
+    /// 本次删除返回结果的方式和目标 Object
+    /// <see cref="https://cloud.tencent.com/document/product/436/8289"/>
+    /// </summary>
     public sealed class DeleteResult
     {
+        /// <summary>
+        /// 本次删除的成功 Object 信息
+        /// <see cref="Deleted"/>
+        /// </summary>
         public List<Deleted> deletedList;
+        /// <summary>
+        /// 本次删除的失败 Object 信息
+        /// <see cref="Error"/>
+        /// </summary>
         public List<Error> errorList;
 
        
@@ -37,9 +49,21 @@ namespace COSXML.Model.Tag
 
         public sealed class Deleted
         {
+            /// <summary>
+            /// Object 的名称
+            /// </summary>
             public string key;
+            /// <summary>
+            /// Object 的版本Id
+            /// </summary>
             public string versionId;
-            public bool deleteMarker;
+            /// <summary>
+            /// deleete marker
+            /// </summary>
+            public string deleteMarker;
+            /// <summary>
+            /// delete marker versionId
+            /// </summary>
             public string  deleteMarkerVersionId;
            
             public string GetInfo()
@@ -56,15 +80,27 @@ namespace COSXML.Model.Tag
 
         public sealed class Error
         {
+            /// <summary>
+            /// 删除失败的 Object 的名称
+            /// </summary>
             public string key;
+            /// <summary>
+            /// 删除失败的错误代码
+            /// </summary>
             public string code;
+            /// <summary>
+            /// 删除失败的错误信息
+            /// </summary>
             public string message;
+            /// <summary>
+            /// 删除失败的 Object 的 版本Id
+            /// </summary>
             public string versionId;
 
            
             public string GetInfo()
             {
-                StringBuilder stringBuilder = new StringBuilder("{CosError:\n");
+                StringBuilder stringBuilder = new StringBuilder("{Error:\n");
                 stringBuilder.Append("Key:").Append(key).Append("\n");
                 stringBuilder.Append("Code:").Append(code).Append("\n");
                 stringBuilder.Append("Message:").Append(message).Append("\n");

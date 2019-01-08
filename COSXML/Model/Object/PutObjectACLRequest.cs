@@ -8,6 +8,10 @@ using COSXML.Model.Tag;
 
 namespace COSXML.Model.Object
 {
+    /// <summary>
+    /// 设置 对象 的ACL
+    /// <see cref="https://cloud.tencent.com/document/product/436/7748"/>
+    /// </summary>
     public sealed class PutObjectACLRequest : ObjectRequest
     {
         public PutObjectACLRequest(string bucket, string key)
@@ -16,7 +20,11 @@ namespace COSXML.Model.Object
             this.method = CosRequestMethod.PUT;
             this.queryParameters.Add("acl", null);
         }
-
+        /// <summary>
+        /// 定义 Object 的 acl 属性。有效值：private，public-read-write，public-read；默认值：private
+        /// <see cref="Common.CosACL"/>
+        /// </summary>
+        /// <param name="cosACL"></param>
         public void SetCosACL(string cosACL)
         {
             if (cosACL != null)
@@ -24,29 +32,45 @@ namespace COSXML.Model.Object
                 SetRequestHeader(CosRequestHeaderKey.X_COS_ACL, cosACL);
             }
         }
-
+        /// <summary>
+        /// 定义 Object 的 acl 属性。有效值：private，public-read-write，public-read；默认值：private
+        /// <see cref="Common.CosACL"/> 
+        /// </summary>
+        /// <param name="cosACL"></param>
         public void SetCosACL(CosACL cosACL)
         {
             SetRequestHeader(CosRequestHeaderKey.X_COS_ACL, EnumUtils.GetValue(cosACL));
         }
-
-        public void setXCosGrantRead(GrantAccount grantAccount)
+        /// <summary>
+        /// 赋予被授权者读的权限
+        /// <see cref="Model.Tag.GrantAccount"/>
+        /// </summary>
+        /// <param name="grantAccount"></param>
+        public void SetXCosGrantRead(GrantAccount grantAccount)
         {
             if (grantAccount != null)
             {
                 SetRequestHeader(CosRequestHeaderKey.X_COS_GRANT_READ, grantAccount.GetGrantAccounts());
             }
         }
-
-        public void setXCosGrantWrite(GrantAccount grantAccount)
+        /// <summary>
+        /// 赋予被授权者写的权限
+        /// <see cref="Model.Tag.GrantAccount"/>
+        /// </summary>
+        /// <param name="grantAccount"></param>
+        public void SetXCosGrantWrite(GrantAccount grantAccount)
         {
             if (grantAccount != null)
             {
                 SetRequestHeader(CosRequestHeaderKey.X_COS_GRANT_WRITE, grantAccount.GetGrantAccounts());
             }
         }
-
-        public void setXCosReadWrite(GrantAccount grantAccount)
+        /// <summary>
+        /// 赋予被授权者所有的权限
+        /// <see cref="Model.Tag.GrantAccount"/>
+        /// </summary>
+        /// <param name="grantAccount"></param>
+        public void SetXCosReadWrite(GrantAccount grantAccount)
         {
             if (grantAccount != null)
             {

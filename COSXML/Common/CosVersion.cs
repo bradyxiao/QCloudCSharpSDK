@@ -15,29 +15,28 @@ namespace COSXML.Common
 
         public static string GetUserAgent()
         {
-            return String.Format("cos-net-sdk.{0}", "5.4.0.0");
-            //StringBuilder userAgent = new StringBuilder();
-            //userAgent.Append("cos-net-sdk").Append('.')
-            //    .Append(typeof(CosVersion).Assembly.GetName().Version.ToString());
-            //return userAgent.ToString();
+            StringBuilder userAgent = new StringBuilder();
+            userAgent.Append("cos-net-sdk").Append('.')
+                .Append(typeof(CosVersion).Assembly.GetName().Version.ToString());
+            return userAgent.ToString();
         }
 
-        public static string GetOsVersion()
-        {
-            try
-            {
-                var os = Environment.OSVersion;
-                return "windows " + os.Version.Major + "." + os.Version.Minor;
-            }
-            catch (InvalidOperationException)
-            {
-                return "Unknown OSVersion";
-            }
-        }
+        //public static string GetOsVersion()
+        //{
+        //    try
+        //    {
+        //        var os = Environment.OSVersion;
+        //        return "windows " + os.Version.Major + "." + os.Version.Minor;
+        //    }
+        //    catch (InvalidOperationException)
+        //    {
+        //        return "Unknown OSVersion";
+        //    }
+        //}
 
-        public static string GetOsArchitecture()
-        {
-            return (IntPtr.Size == 8) ? "x86_64" : "x86";
-        }
+        //public static string GetOsArchitecture()
+        //{
+        //    return (IntPtr.Size == 8) ? "x86_64" : "x86";
+        //}
     }
 }

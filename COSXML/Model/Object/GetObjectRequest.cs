@@ -8,12 +8,27 @@ using System.IO;
 
 namespace COSXML.Model.Object
 {
+    /// <summary>
+    /// 下载对象
+    /// <see cref="https://cloud.tencent.com/document/product/436/7753"/>
+    /// </summary>
     public sealed class GetObjectRequest : ObjectRequest
     {
+        /// <summary>
+        /// 保存文件的本地文件夹路径
+        /// </summary>
         private string localDir;
+        /// <summary>
+        /// 保存文件的本地的文件名
+        /// </summary>
         private string localFileName;
+        /// <summary>
+        /// 保存文件的本地偏移位置，下载的数据从此处开始append该文件后面
+        /// </summary>
         private long localFileOffset = 0;
-
+        /// <summary>
+        /// 下载进度回调
+        /// </summary>
         private COSXML.Callback.OnProgressCallback progressCallback;
 
         
@@ -24,7 +39,10 @@ namespace COSXML.Model.Object
             this.localDir = localDir;
             this.localFileName = localFileName;
         }
-
+        /// <summary>
+        /// 下载进度回调
+        /// </summary>
+        /// <param name="progressCallback"></param>
         public void SetCosProgressCallback(COSXML.Callback.OnProgressCallback progressCallback)
         {
             this.progressCallback = progressCallback;
@@ -35,6 +53,10 @@ namespace COSXML.Model.Object
             return progressCallback;
         }
 
+        /// <summary>
+        /// 保存文件的本地偏移位置，下载的数据从此处开始append该文件后面
+        /// </summary>
+        /// <param name="localFileOffset"></param>
         public void SetLocalFileOffset(long localFileOffset)
         {
             this.localFileOffset = localFileOffset > 0 ? localFileOffset : 0;
@@ -44,7 +66,11 @@ namespace COSXML.Model.Object
         {
             return localFileOffset;
         }
-
+        /// <summary>
+        /// 下载内容范围
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
         public void SetRange(long start, long end)
         {
             if (start < 0) return;
@@ -53,12 +79,18 @@ namespace COSXML.Model.Object
                 (end == -1 ? "" : end.ToString()))); 
 
         }
-
+        /// <summary>
+        /// 下载内容的起始偏移量
+        /// </summary>
+        /// <param name="start"></param>
         public void SetRange(long start)
         {
             SetRange(start, -1);
         }
-
+        /// <summary>
+        /// 下载特定版本的对象
+        /// </summary>
+        /// <param name="versionId"></param>
         public void SetVersionId(string versionId)
         {
             if (versionId != null)
@@ -66,7 +98,10 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.VERSION_ID, versionId);
             }
         }
-
+        /// <summary>
+        /// 响应头部中的 Content-Type 参数
+        /// </summary>
+        /// <param name="responseContentType"></param>
         public void SetResponseContentType(string responseContentType)
         {
             if (responseContentType != null)
@@ -74,7 +109,10 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.RESPONSE_CONTENT_TYPE, responseContentType);
             }
         }
-
+        /// <summary>
+        /// 响应头部中的 Content-Language 参数
+        /// </summary>
+        /// <param name="responseContentLanguage"></param>
         public void SetResponseContentLanguage(string responseContentLanguage)
         {
             if (responseContentLanguage != null)
@@ -82,7 +120,10 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.RESPONSE_CONTENT_LANGUAGE, responseContentLanguage);
             }
         }
-
+        /// <summary>
+        /// 响应头部中的 Cache-Control 参数
+        /// </summary>
+        /// <param name="responseCacheControl"></param>
         public void SetResponseCacheControl(string responseCacheControl)
         {
             if (responseCacheControl != null)
@@ -90,7 +131,10 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.RESPONSE_CACHE_CONTROL, responseCacheControl);
             }
         }
-
+        /// <summary>
+        /// 响应头部中的 Content-Disposition 参数
+        /// </summary>
+        /// <param name="responseDisposition"></param>
         public void SetResponseContentDisposition(string responseDisposition)
         {
             if (responseDisposition != null)
@@ -98,7 +142,10 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.RESPONSE_CONTENT_DISPOSITION, responseDisposition);
             }
         }
-
+        /// <summary>
+        /// 响应头部中的 Content-Encoding 参数
+        /// </summary>
+        /// <param name="responseContentEncoding"></param>
         public void SetResponseContentEncoding(string responseContentEncoding)
         {
             if (responseContentEncoding != null)
@@ -106,7 +153,10 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.RESPONSE_CONTENT_ENCODING, responseContentEncoding);
             }
         }
-
+        /// <summary>
+        /// 响应头部中的 Content-Expires 参数
+        /// </summary>
+        /// <param name="responseExpires"></param>
         public void SetResponseExpires(string responseExpires)
         {
             if (responseExpires != null)
@@ -114,13 +164,17 @@ namespace COSXML.Model.Object
                 SetQueryParameter(CosRequestHeaderKey.RESPONSE_EXPIRES, responseExpires);
             }
         }
-
+        
         public override void CheckParameters()
         {
-            base.CheckParameters();
             if (localDir == null) throw new CosClientException((int)CosClientError.INVALID_ARGUMENT, "localDir = null");
+            if(requestUrlWithSign != null && localFileName == null) throw new CosClientException((int)CosClientError.INVALID_ARGUMENT, "localFileName = null");
+            base.CheckParameters();
         }
-
+        /// <summary>
+        /// 获取本地文件保存路径
+        /// </summary>
+        /// <returns></returns>
         public string GetSaveFilePath()
         {
             string result = localDir;

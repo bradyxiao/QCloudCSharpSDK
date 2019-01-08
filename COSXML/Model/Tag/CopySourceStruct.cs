@@ -14,10 +14,25 @@ namespace COSXML.Model.Tag
 {
     public sealed class CopySourceStruct
     {
+        /// <summary>
+        /// cos 服务的appid
+        /// </summary>
         public string appid;
+        /// <summary>
+        /// 存储桶名称
+        /// </summary>
         public string bucket;
+        /// <summary>
+        /// Bucket所属地域
+        /// </summary>
         public string region;
+        /// <summary>
+        /// 对象键
+        /// </summary>
         public string key;
+        /// <summary>
+        /// 对象的版本ID
+        /// </summary>
         public string versionId;
 
         public CopySourceStruct(string appid, string bucket, string region, string key, string versionId)

@@ -7,9 +7,19 @@ using COSXML.CosException;
 
 namespace COSXML.Model.Object
 {
+    /// <summary>
+    /// 实现 Object 跨域访问配置的预请求
+    /// <see cref="https://cloud.tencent.com/document/product/436/8288"/>
+    /// </summary>
     public sealed class OptionObjectRequest : ObjectRequest
     {
+        /// <summary>
+        /// 模拟跨域访问的请求来源域名
+        /// </summary>
         private string origin;
+        /// <summary>
+        /// 模拟跨域访问的请求 HTTP 方法
+        /// </summary>
         private string accessControlMethod;
 
         public OptionObjectRequest(string bucket, string key, string origin, string accessControlMethod)
@@ -22,12 +32,18 @@ namespace COSXML.Model.Object
                 this.accessControlMethod = accessControlMethod.ToUpper();
             }
         }
-
+        /// <summary>
+        /// 模拟跨域访问的请求来源域名
+        /// </summary>
+        /// <param name="origin"></param>
         public void SetOrigin(string origin)
         {
             this.origin = origin;
         }
-
+        /// <summary>
+        /// 模拟跨域访问的请求 HTTP 方法
+        /// </summary>
+        /// <param name="accessControlMethod"></param>
         public void SetAccessControlMethod(string accessControlMethod)
         {
             if (accessControlMethod != null)
@@ -35,7 +51,10 @@ namespace COSXML.Model.Object
                 this.accessControlMethod = accessControlMethod.ToUpper();
             }
         }
-
+        /// <summary>
+        /// 模拟跨域访问的请求头部
+        /// </summary>
+        /// <param name="accessControlHeaders"></param>
         public void SetAccessControlHeaders(List<string> accessControlHeaders)
         {
             if (accessControlHeaders != null)
@@ -56,8 +75,7 @@ namespace COSXML.Model.Object
 
         public override void CheckParameters()
         {
-            base.CheckParameters();
-            if(origin == null)
+            if (origin == null)
             {
                 throw new CosClientException((int)CosClientError.INVALID_ARGUMENT, "origin = null");
             }
@@ -65,13 +83,27 @@ namespace COSXML.Model.Object
             {
                 throw new CosClientException((int)CosClientError.INVALID_ARGUMENT, "accessControlMethod = null");
             }
+            base.CheckParameters();
         }
 
         protected override void InteranlUpdateHeaders()
         {
-            this.headers.Add(CosRequestHeaderKey.ORIGIN, origin);
-            this.headers.Add(CosRequestHeaderKey.ACCESS_CONTROL_REQUEST_METHOD, accessControlMethod);
-            base.InteranlUpdateHeaders();
+            try
+            {
+                this.headers.Add(CosRequestHeaderKey.ORIGIN, origin);
+            }
+            catch (ArgumentException)
+            {
+                this.headers[CosRequestHeaderKey.ORIGIN] = origin;
+            }
+            try
+            {
+                this.headers.Add(CosRequestHeaderKey.ACCESS_CONTROL_REQUEST_METHOD, accessControlMethod);
+            }
+            catch (ArgumentException)
+            {
+                this.headers[CosRequestHeaderKey.ACCESS_CONTROL_REQUEST_METHOD] = accessControlMethod;
+            }
         }
     }
 }

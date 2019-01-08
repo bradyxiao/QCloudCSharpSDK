@@ -30,31 +30,26 @@ namespace COSXML
         public string Appid
         {
             get { return appid; }
-            private set { }
         }
 
         public string Region
         {
             get { return region; }
-            private set { }
         }
 
         public bool IsHttps
         {
             get { return isHttps; }
-            private set { }
         }
 
         public HttpClientConfig HttpConfig
         {
             get { return httpConfig; }
-            private set { }
         }
 
         public bool IsDebugLog
         {
             get { return isDebug; }
-            private set { }
         }
 
         public sealed class Builder
@@ -68,18 +63,32 @@ namespace COSXML
             {
                 httpClientConfigBuilder = new HttpClientConfig.Builder();
             }
+            /// <summary>
+            /// cos 服务的Appid
+            /// </summary>
+            /// <param name="appid"></param>
+            /// <returns></returns>
             public Builder SetAppid(string appid)
             {
                 this.appid = appid;
                 return this;
             }
-
+            /// <summary>
+            /// 存储桶所属地域
+            /// <see cref="COSXML.Common.CosRegion"/>
+            /// </summary>
+            /// <param name="region"></param>
+            /// <returns></returns>
             public Builder SetRegion(string region)
             {
                 this.region = region;
                 return this;
             }
-
+            /// <summary>
+            /// true：https请求
+            /// </summary>
+            /// <param name="isHttps"></param>
+            /// <returns></returns>
             public Builder IsHttps(bool isHttps)
             {
                 this.isHttps = isHttps;
@@ -136,6 +145,12 @@ namespace COSXML
             public Builder SetProxyDomain(string domain)
             {
                 this.httpClientConfigBuilder.SetProxyDomain(domain);
+                return this;
+            }
+
+            public Builder SetAllowAutoRedirect(bool isAllow)
+            {
+                this.httpClientConfigBuilder.AllowAutoRedirect(isAllow);
                 return this;
             }
 

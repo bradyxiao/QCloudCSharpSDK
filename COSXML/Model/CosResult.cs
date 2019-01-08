@@ -17,13 +17,20 @@ namespace COSXML.Model
      */
     public abstract class CosResult
     {
+        /// <summary>
+        /// http code
+        /// </summary>
         public int httpCode;
 
+        /// <summary>
+        /// http message
+        /// </summary>
         public string httpMessage;
 
+        /// <summary>
+        /// http response headers
+        /// </summary>
         public Dictionary<string, List<string>> responseHeaders;
-
-        public string accessUrl;
 
         /// <summary>
         /// parse status line and headers

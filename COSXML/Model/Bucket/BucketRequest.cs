@@ -18,8 +18,14 @@ namespace COSXML.Model.Bucket
      */
     public abstract class BucketRequest : CosRequest
     {
+        /// <summary>
+        /// cos 存储桶,即 Bucket
+        /// </summary>
         protected string bucket;
 
+        /// <summary>
+        /// Bucket 所在的地域
+        /// </summary>
         protected string region;
 
         public BucketRequest(string bucket)
@@ -28,12 +34,19 @@ namespace COSXML.Model.Bucket
             this.path = "/";
         }
 
+        /// <summary>
+        /// Bucket 名称， "BucketName-APPID"
+        /// </summary>
         public string Bucket
         {
             get { return this.bucket; }
             set { this.bucket = value; }
         }
 
+        /// <summary>
+        /// Bucket 所在地域
+        /// <see cref="COSXML.Common.CosRegion"/>
+        /// </summary>
         public string Region
         {
             get { return this.region; }
@@ -65,6 +78,11 @@ namespace COSXML.Model.Bucket
 
         public override void CheckParameters()
         {
+            if (requestUrlWithSign != null) return;
+            //if (appid == null)
+            //{
+            //    throw new CosClientException((int)CosClientError.INVALID_ARGUMENT, "appid is null");
+            //}
             if (bucket == null)
             {
                 throw new CosClientException((int)CosClientError.INVALID_ARGUMENT, "bucket is null");

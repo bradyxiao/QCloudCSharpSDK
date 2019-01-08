@@ -11,9 +11,21 @@ namespace COSXML.Model.Tag
 {
     public sealed class PostResponse
     {
+        /// <summary>
+        /// 对象的完整路径。
+        /// </summary>
         public string location;
+        /// <summary>
+        /// 对象所在的存储桶
+        /// </summary>
         public string bucket;
+        /// <summary>
+        /// 对象 key 名
+        /// </summary>
         public string key;
+        /// <summary>
+        /// 对象Etag 内容
+        /// </summary>
         public string eTag;
 
         

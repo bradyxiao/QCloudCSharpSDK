@@ -9,9 +9,20 @@ using System.Text;
 */
 namespace COSXML.Model.Tag
 {
+    /// <summary>
+    /// <see cref="https://cloud.tencent.com/document/product/436/8291"/>
+    /// </summary>
     public sealed class ListAllMyBuckets
     {
+        /// <summary>
+        /// Bucket 持有者的信息
+        /// <see cref="Owner"/>
+        /// </summary>
         public Owner owner;
+        /// <summary>
+        /// 本次响应的所有 Bucket 列表信息
+        /// <see cref="Bucket"/>
+        /// </summary>
         public List<Bucket> buckets;
 
         public string GetInfo()
@@ -33,7 +44,13 @@ namespace COSXML.Model.Tag
 
         public sealed class Owner
         {
+            /// <summary>
+            /// Bucket 所有者的 ID
+            /// </summary>
             public string id;
+            /// <summary>
+            /// Bucket 所有者的名字信息
+            /// </summary>
             public string disPlayName;
 
             public string GetInfo()
@@ -48,8 +65,17 @@ namespace COSXML.Model.Tag
 
         public sealed class Bucket
         {
+            /// <summary>
+            /// Bucket 的名称
+            /// </summary>
             public string name;
+            /// <summary>
+            /// Bucket 所在地域
+            /// </summary>
             public string location;
+            /// <summary>
+            /// Bucket 创建时间。ISO8601 格式
+            /// </summary>
             public string createDate;
             public string GetInfo()
             {
