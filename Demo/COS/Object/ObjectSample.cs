@@ -154,15 +154,15 @@ namespace Demo.COS.Object
 
                 COSXML.Model.Tag.GrantAccount readAccount = new COSXML.Model.Tag.GrantAccount();
                 readAccount.AddGrantAccount("1131975903", "1131975903");
-                request.setXCosGrantRead(readAccount);
+                request.SetXCosGrantRead(readAccount);
 
                 COSXML.Model.Tag.GrantAccount writeAccount = new COSXML.Model.Tag.GrantAccount();
                 writeAccount.AddGrantAccount("1131975903", "1131975903");
-                request.setXCosGrantWrite(writeAccount);
+                request.SetXCosGrantWrite(writeAccount);
 
                 COSXML.Model.Tag.GrantAccount fullAccount = new COSXML.Model.Tag.GrantAccount();
                 fullAccount.AddGrantAccount("2832742109", "2832742109");
-                request.setXCosReadWrite(fullAccount);
+                request.SetXCosReadWrite(fullAccount);
 
                 //执行请求
                 PutObjectACLResult result = cosXml.PutObjectACL(request);
@@ -194,15 +194,15 @@ namespace Demo.COS.Object
 
             COSXML.Model.Tag.GrantAccount readAccount = new COSXML.Model.Tag.GrantAccount();
             readAccount.AddGrantAccount("1131975903", "1131975903");
-            request.setXCosGrantRead(readAccount);
+            request.SetXCosGrantRead(readAccount);
 
             COSXML.Model.Tag.GrantAccount writeAccount = new COSXML.Model.Tag.GrantAccount();
             writeAccount.AddGrantAccount("1131975903", "1131975903");
-            request.setXCosGrantWrite(writeAccount);
+            request.SetXCosGrantWrite(writeAccount);
 
             COSXML.Model.Tag.GrantAccount fullAccount = new COSXML.Model.Tag.GrantAccount();
             fullAccount.AddGrantAccount("2832742109", "2832742109");
-            request.setXCosReadWrite(fullAccount);
+            request.SetXCosReadWrite(fullAccount);
 
             cosXml.PutObjectACL(request,
                 delegate(CosResult cosResult)
@@ -594,7 +594,7 @@ namespace Demo.COS.Object
         {
             try
             {
-                CompleteMultiUploadRequest request = new CompleteMultiUploadRequest(bucket, key, uploadId);
+                CompleteMultipartUploadRequest request = new CompleteMultipartUploadRequest(bucket, key, uploadId);
                 //设置签名有效时长
                 request.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
 
@@ -602,7 +602,7 @@ namespace Demo.COS.Object
                 request.SetPartNumberAndETag(partNumberAndEtags);
 
                 //执行请求
-                CompleteMultiUploadResult result = cosXml.CompleteMultiUpload(request);
+                CompleteMultipartUploadResult result = cosXml.CompleteMultiUpload(request);
 
                 Console.WriteLine(result.GetResultInfo());
             }
@@ -620,7 +620,7 @@ namespace Demo.COS.Object
 
         public static void AsynCompleteMultiUpload(COSXML.CosXml cosXml, string bucket, string key, string uploadId, Dictionary<int, string> partNumberAndEtags)
         {
-            CompleteMultiUploadRequest request = new CompleteMultiUploadRequest(bucket, key, uploadId);
+            CompleteMultipartUploadRequest request = new CompleteMultipartUploadRequest(bucket, key, uploadId);
             //设置签名有效时长
             request.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
 
@@ -630,7 +630,7 @@ namespace Demo.COS.Object
             //执行请求
             cosXml.CompleteMultiUpload(request, delegate(CosResult result)
             {
-                CompleteMultiUploadResult getObjectResult = result as CompleteMultiUploadResult;
+                CompleteMultipartUploadResult getObjectResult = result as CompleteMultipartUploadResult;
                 Console.WriteLine(getObjectResult.GetResultInfo());
                 QLog.D("XIAO", result.GetResultInfo());
             }, delegate(CosClientException clientEx, CosServerException serverEx)
@@ -652,11 +652,11 @@ namespace Demo.COS.Object
         {
             try
             {
-                AbortMultiUploadRequest request = new AbortMultiUploadRequest(bucket, key, uploadId);
+                AbortMultipartUploadRequest request = new AbortMultipartUploadRequest(bucket, key, uploadId);
                 //设置签名有效时长
                 request.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
                 //执行请求
-                AbortMultiUploadResult result = cosXml.AbortMultiUpload(request);
+                AbortMultipartUploadResult result = cosXml.AbortMultiUpload(request);
 
                 Console.WriteLine(result.GetResultInfo());
             }
@@ -673,15 +673,15 @@ namespace Demo.COS.Object
         }
 
         public static void AsynAbortMultiUpload(COSXML.CosXml cosXml, string bucket, string key, string uploadId)
-        { 
-            AbortMultiUploadRequest request = new AbortMultiUploadRequest(bucket, key, uploadId);
+        {
+            AbortMultipartUploadRequest request = new AbortMultipartUploadRequest(bucket, key, uploadId);
             //设置签名有效时长
             request.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
 
             //执行请求
             cosXml.AbortMultiUpload(request, delegate(CosResult result)
             {
-                AbortMultiUploadResult getObjectResult = result as AbortMultiUploadResult;
+                AbortMultipartUploadResult getObjectResult = result as AbortMultipartUploadResult;
                 Console.WriteLine(getObjectResult.GetResultInfo());
             }, delegate(CosClientException clientEx, CosServerException serverEx)
             {

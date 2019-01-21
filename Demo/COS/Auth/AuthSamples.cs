@@ -8,14 +8,9 @@ namespace Demo.COS.Auth
 {
     public sealed class AuthSamples
     {
-        public static void testCAM(string secretId, string secretKey)
+        public static void testCAM(string secretId, string secretKey, long expire, string token)
         {
-            DefaultSessionQCloudCredentialProvider defaultSessionCredentials = new DefaultSessionQCloudCredentialProvider();
-            defaultSessionCredentials.SetQCloudCredential(secretId, secretKey);
-        }
-
-        public static void testSign(string secretId, string secretKey)
-        {
+            DefaultSessionQCloudCredentialProvider defaultSessionCredentials = new DefaultSessionQCloudCredentialProvider(secretId, secretKey, expire, token);
 
         }
     }

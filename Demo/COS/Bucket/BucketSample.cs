@@ -343,15 +343,15 @@ namespace Demo.COS.Bucket
 
                 COSXML.Model.Tag.GrantAccount readAccount = new COSXML.Model.Tag.GrantAccount();
                 readAccount.AddGrantAccount("1131975903", "1131975903");
-                request.setXCosGrantRead(readAccount);
+                request.SetXCosGrantRead(readAccount);
 
                 COSXML.Model.Tag.GrantAccount writeAccount = new COSXML.Model.Tag.GrantAccount();
                 writeAccount.AddGrantAccount("1131975903", "1131975903");
-                request.setXCosGrantWrite(writeAccount);
+                request.SetXCosGrantWrite(writeAccount);
 
                 COSXML.Model.Tag.GrantAccount fullAccount = new COSXML.Model.Tag.GrantAccount();
                 fullAccount.AddGrantAccount("2832742109", "2832742109");
-                request.setXCosReadWrite(fullAccount);
+                request.SetXCosReadWrite(fullAccount);
 
                 //执行请求
                 PutBucketACLResult result = cosXml.PutBucketACL(request);
@@ -380,15 +380,15 @@ namespace Demo.COS.Bucket
 
             COSXML.Model.Tag.GrantAccount readAccount = new COSXML.Model.Tag.GrantAccount();
             readAccount.AddGrantAccount("1131975903", "1131975903");
-            request.setXCosGrantRead(readAccount);
+            request.SetXCosGrantRead(readAccount);
 
             COSXML.Model.Tag.GrantAccount writeAccount = new COSXML.Model.Tag.GrantAccount();
             writeAccount.AddGrantAccount("1131975903", "1131975903");
-            request.setXCosGrantWrite(writeAccount);
+            request.SetXCosGrantWrite(writeAccount);
 
             COSXML.Model.Tag.GrantAccount fullAccount = new COSXML.Model.Tag.GrantAccount();
             fullAccount.AddGrantAccount("2832742109", "2832742109");
-            request.setXCosReadWrite(fullAccount);
+            request.SetXCosReadWrite(fullAccount);
 
             ///执行请求
             cosXml.PutBucketACL(request,
@@ -866,7 +866,6 @@ namespace Demo.COS.Bucket
                 request.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
 
                 //设置replication
-                request.setReplicationConfigurationWithRole("2832742109", "2832742109");
                 PutBucketReplicationRequest.RuleStruct ruleStruct = new PutBucketReplicationRequest.RuleStruct();
                 ruleStruct.appid = "";
                 ruleStruct.bucket = "";
@@ -875,8 +874,9 @@ namespace Demo.COS.Bucket
                 ruleStruct.storageClass = "";
                 ruleStruct.id = "";
                 ruleStruct.prefix = "";
-
-                request.setReplicationConfigurationWithRule(ruleStruct);
+                List<PutBucketReplicationRequest.RuleStruct> ruleStructs = new List<PutBucketReplicationRequest.RuleStruct>();
+                ruleStructs.Add(ruleStruct);
+                request.SetReplicationConfiguration("2832742109", "2832742109", ruleStructs);
 
                 //执行请求
                 PutBucketReplicationResult result = cosXml.PutBucketReplication(request);
@@ -902,7 +902,6 @@ namespace Demo.COS.Bucket
             //设置签名有效时长
             request.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
             //设置replication
-            request.setReplicationConfigurationWithRole("2832742109", "2832742109");
             PutBucketReplicationRequest.RuleStruct ruleStruct = new PutBucketReplicationRequest.RuleStruct();
             ruleStruct.appid = "";
             ruleStruct.bucket = "";
@@ -911,6 +910,9 @@ namespace Demo.COS.Bucket
             ruleStruct.storageClass = "";
             ruleStruct.id = "";
             ruleStruct.prefix = "";
+            List<PutBucketReplicationRequest.RuleStruct> ruleStructs = new List<PutBucketReplicationRequest.RuleStruct>();
+            ruleStructs.Add(ruleStruct);
+            request.SetReplicationConfiguration("2832742109", "2832742109", ruleStructs);
             ///执行请求
             cosXml.PutBucketReplication(request,
                 delegate(CosResult cosResult)

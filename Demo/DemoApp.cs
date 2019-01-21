@@ -292,11 +292,11 @@ namespace Demo
                     string key = upload.key;
                     string uploadId = upload.uploadID;
 
-                    COSXML.Model.Object.AbortMultiUploadRequest abort = new COSXML.Model.Object.AbortMultiUploadRequest(bucket,
+                    COSXML.Model.Object.AbortMultipartUploadRequest abort = new COSXML.Model.Object.AbortMultipartUploadRequest(bucket,
                         key, uploadId);
                     abort.Region = EnumUtils.GetValue(CosRegion.AP_Guangzhou);
                     abort.SetSign(COSXML.Utils.TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
-                    COSXML.Model.Object.AbortMultiUploadResult abortResult = cosXml.AbortMultiUpload(abort);
+                    COSXML.Model.Object.AbortMultipartUploadResult abortResult = cosXml.AbortMultiUpload(abort);
                 }
                
             }
