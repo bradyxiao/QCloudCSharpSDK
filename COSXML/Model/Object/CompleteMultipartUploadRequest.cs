@@ -13,7 +13,7 @@ namespace COSXML.Model.Object
     /// 实现完成整个分块上传
     /// <see cref="https://cloud.tencent.com/document/product/436/7742"/>
     /// </summary>
-    public sealed class CompleteMultiUploadRequest : ObjectRequest
+    public sealed class CompleteMultipartUploadRequest : ObjectRequest
     {
         /// <summary>
         /// 本次分块上传的所有信息
@@ -27,7 +27,7 @@ namespace COSXML.Model.Object
         /// </summary>
         private string uploadId;
 
-        public CompleteMultiUploadRequest(string bucket, string key, string uploadId)
+        public CompleteMultipartUploadRequest(string bucket, string key, string uploadId)
             : base(bucket, key)
         {
             this.method = CosRequestMethod.POST;
