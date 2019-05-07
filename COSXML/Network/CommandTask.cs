@@ -8,7 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using COSXML.Log;
 using System.Reflection;
 using System.IO;
-using System.Collections.Specialized;
+using System.Net.Cache;
 
 /**
 * Copyright (c) 2018 Tencent Cloud. All rights reserved.
@@ -53,6 +53,8 @@ namespace COSXML.Network
                 //step1: create HttpWebRequest by request.url
                 httpWebRequest = HttpWebRequest.Create(request.RequestUrlString) as HttpWebRequest;
 
+                httpWebRequest.AllowWriteStreamBuffering = false;
+
                 //bind webRequest
                 request.BindHttpWebRequest(httpWebRequest);
 
@@ -82,14 +84,14 @@ namespace COSXML.Network
                 }
                 else
                 {
-                    QLog.E(TAG, webEx.Message, webEx);
+                    //QLog.E(TAG, webEx.Message, webEx);
                     throw;
                 }
                 
             }
             catch (Exception ex)
             {
-                QLog.E(TAG, ex.Message, ex);
+                //QLog.E(TAG, ex.Message, ex);
                 throw;
             }
             finally
@@ -99,12 +101,12 @@ namespace COSXML.Network
                     // print log
                     PrintResponseInfo(httpWebResponse);
                     httpWebResponse.Close();
+                    //QLog.D("XIAO", "response close");
                 }
                 if (httpWebRequest != null)
                 {
-                    //print log
-                    PrintReqeustInfo(httpWebRequest);
                     httpWebRequest.Abort();
+                    //QLog.D("XIAO", "request close");
                 }
                 QLog.D(TAG, "close");
             }
@@ -126,6 +128,8 @@ namespace COSXML.Network
                 httpWebRequest.ContentLength = request.Body.ContentLength;
                 request.Body.OnWrite(httpWebRequest.GetRequestStream());
             }
+            //print request start log
+            PrintReqeustInfo(httpWebRequest);
         }
 
         /// <summary>
@@ -163,6 +167,8 @@ namespace COSXML.Network
 
                 httpWebRequest = WebRequest.Create(request.RequestUrlString) as HttpWebRequest;
 
+                httpWebRequest.AllowWriteStreamBuffering = false;
+
                 //bind webRequest
                 request.BindHttpWebRequest(httpWebRequest);
 
@@ -175,12 +181,12 @@ namespace COSXML.Network
                 if(request.Body != null)
                 {
                     httpWebRequest.ContentLength = request.Body.ContentLength;
-                    httpWebRequest.BeginGetRequestStream(AsyncRequestCallback, requestState);
+                    httpWebRequest.BeginGetRequestStream(new AsyncCallback(AsyncRequestCallback), requestState);
                 }
                 else
                 {
                     //wait for response
-                    httpWebRequest.BeginGetResponse(AsyncResponseCallback, requestState);
+                    httpWebRequest.BeginGetResponse(new AsyncCallback(AsyncResponseCallback), requestState);
                 }
                 
                 //print log
@@ -231,7 +237,7 @@ namespace COSXML.Network
                     else
                     {
                         //wait for response
-                        httpWebRequest.BeginGetResponse(AsyncResponseCallback, requestState);
+                        httpWebRequest.BeginGetResponse(new AsyncCallback(AsyncResponseCallback), requestState);
                     }
                 });
 
@@ -354,6 +360,8 @@ namespace COSXML.Network
             {
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationCertificate);
             }
+            //初始化长度
+            httpWebRequest.ContentLength = 0L;
         }
 
         /// <summary>
@@ -458,6 +466,7 @@ namespace COSXML.Network
             requestLog.Append("allow auto redirect: " + httpWebRequest.AllowAutoRedirect).Append('\n');
             requestLog.Append("connect timeout: " + httpWebRequest.Timeout).Append('\n');
             requestLog.Append("read write timeout: " + httpWebRequest.ReadWriteTimeout).Append('\n');
+            requestLog.Append("AllowWriteStreamBuffering: " + httpWebRequest.AllowWriteStreamBuffering).Append('\n');
             //requestLog.Append("proxy: " + (httpWebRequest.Proxy == null ? "null" : ((WebProxy)httpWebRequest.Proxy).Address.ToString()));
             requestLog.Append("<---");
             QLog.D(TAG, requestLog.ToString());
@@ -505,7 +514,8 @@ namespace COSXML.Network
                     // Specify the internal method name for adding headers
                     // mono: AddWithoutValidate
                     // win: AddInternal
-                    var internalMethodName = (isMonoPlatform == false) ? "AddWithoutValidate" : "AddInternal";
+                    //var internalMethodName = (isMonoPlatform == false) ? "AddWithoutValidate" : "AddInternal";
+                    var internalMethodName = "AddWithoutValidate";
                     QLog.D(TAG, internalMethodName.ToString());
                     var method = typeof(WebHeaderCollection).GetMethod(
                         internalMethodName,

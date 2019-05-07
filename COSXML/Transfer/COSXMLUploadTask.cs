@@ -8,6 +8,7 @@ using COSXML.Common;
 using COSXML.Utils;
 using COSXML.Model.Tag;
 using COSXML.Log;
+using System.Threading;
 /**
 * Copyright (c) 2018 Tencent Cloud. All rights reserved.
 * 11/29/2018 4:58:32 PM
@@ -17,8 +18,11 @@ namespace COSXML.Transfer
 {
     public sealed class COSXMLUploadTask : COSXMLTask, OnMultipartUploadStateListener
     {
-        private int divisionSize;
-        private int sliceSize;
+        private long divisionSize;
+        private long sliceSize;
+
+        private const int MAX_ACTIVIE_TASKS = 2;
+        private volatile int activieTasks = 0;
 
         private long sendOffset = 0L;
         private long sendContentLength = -1L; // 实际要发送的总长度，类似于content-length
@@ -52,10 +56,15 @@ namespace COSXML.Transfer
         {
         }
 
-        internal void SetDivision(int divisionSize, int sliceSize)
+        internal void SetDivision(long divisionSize, long sliceSize)
         {
             this.divisionSize = divisionSize;
             this.sliceSize = sliceSize;
+        }
+
+        public void SetSrcPath(string srcPath)
+        {
+            SetSrcPath(srcPath, -1L, -1L);
         }
 
         public void SetSrcPath(string srcPath, long fileOffset, long contentLength)
@@ -76,9 +85,11 @@ namespace COSXML.Transfer
             taskState = TaskState.WAITTING;
             hasReceiveDataLength = 0;
             FileInfo fileInfo = null;
+            long sourceLength = 0;
             try
             {
                 fileInfo = new FileInfo(srcPath);
+                sourceLength = fileInfo.Length;
             }
             catch (Exception ex)
             {
@@ -100,7 +111,6 @@ namespace COSXML.Transfer
                 return;
             }
 
-            long sourceLength = fileInfo.Length;
             if(sendContentLength == -1L || (sendContentLength + sendOffset > sourceLength))
             {
                 sendContentLength = sourceLength - sendOffset;
@@ -120,7 +130,6 @@ namespace COSXML.Transfer
         private void SimpleUpload()
         {
             putObjectRequest = new PutObjectRequest(bucket, key, srcPath, sendOffset, sendContentLength);
-            putObjectRequest.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
             if (progressCallback != null)
             {
                 putObjectRequest.SetCosProgressCallback(progressCallback);
@@ -185,7 +194,6 @@ namespace COSXML.Transfer
         private void InitMultiUploadPart()
         {
             initMultiUploadRequest = new InitMultipartUploadRequest(bucket, key);
-            initMultiUploadRequest.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
             cosXmlServer.InitMultipartUpload(initMultiUploadRequest, delegate(CosResult cosResult)
             {
                 lock (syncExit)
@@ -221,7 +229,6 @@ namespace COSXML.Transfer
         private void ListMultiParts()
         {
             listPartsRequest = new ListPartsRequest(bucket, key, uploadId);
-            listPartsRequest.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
             cosXmlServer.ListParts(listPartsRequest, delegate(CosResult cosResult)
             {
                 lock (syncExit)
@@ -256,19 +263,29 @@ namespace COSXML.Transfer
 
         private void UploadPart()
         {
+            activieTasks = 0;
             int size = sliceList.Count;
             sliceCount = size;
             uploadPartRequestMap = new Dictionary<UploadPartRequest, long>(size);
             uploadPartRequestList = new List<UploadPartRequest>(size);
             for (int i = 0; i < size; i++)
             {
-                if (isExit) return;
+                lock (syncExit)
+                {
+                    if (isExit)
+                    {
+                        return;
+                    }
+                }
                 SliceStruct sliceStruct = sliceList[i];
+                while (activieTasks > MAX_ACTIVIE_TASKS)
+                {
+                    Thread.Sleep(5);
+                }
                 if (!sliceStruct.isAlreadyUpload)
                 {
                     UploadPartRequest uploadPartRequest = new UploadPartRequest(bucket, key, sliceStruct.partNumber, uploadId, srcPath, sliceStruct.sliceStart,
                         sliceStruct.sliceLength);
-                    uploadPartRequest.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
 
                     //打印进度
                     uploadPartRequest.SetCosProgressCallback(delegate (long completed, long total)
@@ -285,6 +302,9 @@ namespace COSXML.Transfer
                     uploadPartRequestMap.Add(uploadPartRequest, 0);
                     uploadPartRequestList.Add(uploadPartRequest);
 
+
+                    activieTasks++;
+
                     cosXmlServer.UploadPart(uploadPartRequest, delegate (CosResult result)
                     {
                         lock (syncExit)
@@ -294,6 +314,7 @@ namespace COSXML.Transfer
                                 return;
                             }
                         }
+                        activieTasks--;
                         UploadPartResult uploadPartResult = result as UploadPartResult;
                         sliceStruct.eTag = uploadPartResult.eTag;
                         lock (syncPartCopyCount)
@@ -315,6 +336,7 @@ namespace COSXML.Transfer
                                 return;
                             }
                         }
+                        activieTasks--;
                         if (UpdateTaskState(TaskState.FAILED))
                         {
                             OnFailed(clientEx, serverEx);
@@ -340,6 +362,15 @@ namespace COSXML.Transfer
 
         private void UpdateProgress(long complete, long total, bool isCompleted)
         {
+
+            lock (syncExit)
+            {
+                if (isExit)
+                {
+                    return;
+                }
+            }
+
             if (complete < total)
             {
                 if (progressCallback != null)
@@ -374,7 +405,6 @@ namespace COSXML.Transfer
             {
                 completeMultiUploadRequest.SetPartNumberAndETag(sliceStruct.partNumber, sliceStruct.eTag); // partNumberEtag 有序的
             }
-            completeMultiUploadRequest.SetSign(TimeUtils.GetCurrentTime(TimeUnit.SECONDS), 600);
             cosXmlServer.CompleteMultiUpload(completeMultiUploadRequest, delegate(CosResult result)
             {
                 lock (syncExit)
